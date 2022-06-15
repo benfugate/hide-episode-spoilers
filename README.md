@@ -1,18 +1,27 @@
 # hide-episode-spoilers
 
-Modified JBOPS `hide_episode_spoilers.py` script to fit my needs.
+Modified JBOPS `hide_episode_spoilers.py` script to fit my needs for actively hiding spoilers
 
-This project expects this project to be located in `/home/pi/Documents/Tautulli/`.
-If it is going to be in another location, some of the Docker statements will need be modified.
+---
+
+Setup:
+- Put your smb media mount location in `config/plex_server_ip`
+- Put your smb mount credentials in `config/.smbcredentials`
+
+---
 
 Usage:
-- Build the container with `docker build . -t tautulli`
+- Build the container with `docker build --build-arg media_mount_location=$(sed '1q;d' config/media_mount_location) -t tautulli .`
 - Run with `docker run -d --restart always -v $PWD/config/:/config --name tautulli --privileged --network host tautulli`
-> `update_tautulli.sh` can also be used to start the container from scratch
 
-If current config is wiped, then notification triggers will have to be set up again...
+> `update_tautulli.sh` can also be used to start the container for the first time
 
-Example config:
+Your own posters can be added to `config/scripts/JBOPS/utility/posters/`
+
+---
+
+Example Tautulli config to replace episode art with anti-spoiler art...
+
 > Script timeout: 0
 > 
 > Triggers: Recently added
@@ -23,6 +32,4 @@ Example config:
 > 
 > Arguments: Recently added: `--rating_key {rating_key} --image bbcan_poster.jpg --summary_remove`
 
-The container can be easily updated by running `update_tautulli.sh` in the root directory.
-
-`.smbcredentials` will have to be created in `config/` with the servers media access credentials for docker to be able to mount the media folder.
+The container can be easily updated to the newest tautulli image and apt packages by running `update_tautulli.sh` in the root directory.

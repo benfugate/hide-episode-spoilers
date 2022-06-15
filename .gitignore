@@ -1,4 +1,0 @@
-config/*
-!config/entrypoint.sh
-!config/scripts/
-!config/media/

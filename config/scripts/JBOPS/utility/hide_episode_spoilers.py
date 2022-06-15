@@ -88,7 +88,7 @@ def modify_episode_artwork(plex, rating_key, image=None, blur=None, summary_remo
 
                     # Copy the image to the episode artwork
                     print(f"CREATING... {episode_artwork}")
-                    shutil.copy2(image, episode_artwork)
+                    shutil.copy2("posters/" + image, episode_artwork)
 
             elif blur:
                 # File path to episode artwork using the same episode file name
