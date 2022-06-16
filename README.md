@@ -5,7 +5,7 @@ Modified JBOPS `hide_episode_spoilers.py` script to fit my needs for actively hi
 ---
 
 Setup:
-- Put your smb media mount location in `config/plex_server_ip`
+- Put your smb media mount location in `config/media_mount_location`
 - Put your smb mount credentials in `config/.smbcredentials`
 
 ---
