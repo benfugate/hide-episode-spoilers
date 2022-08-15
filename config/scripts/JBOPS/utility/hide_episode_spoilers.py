@@ -75,20 +75,20 @@ def modify_episode_artwork(plex, rating_key, image=None, blur=None, summary_remo
             if image:
                 # File path to episode artwork using the same episode file name
                 episode_artwork = os.path.splitext(episode_filepath)[0] + os.path.splitext(image)[1]
-                episode_number = re.search(".+(S\d+E\d+).+.jpg", episode_artwork).group(1)
+                episode_number = re.search(".*(S\d+E\d+).*", episode_artwork).group(1)
 
                 # Check if existing image of a lower episode quality is present... if it is, just change that image name.
-                if not os.path.exists(episode_artwork):
+                if not os.path.islink(episode_artwork):
                     files = [filename for filename in os.listdir(episode_folder)]
                     for file in files:
-                        if re.search(f".+({episode_number}).+.jpg", file):
+                        if re.search(f".*({episode_number}).*\.jpg|png", file):
                             print(f"REMOVING... {file}")
                             os.remove(os.path.join(episode_folder, file))
                             break
 
                     # Copy the image to the episode artwork
-                    print(f"CREATING... {episode_artwork}")
-                    shutil.copy2("posters/" + image, episode_artwork)
+                    print(f"CREATING SYMLINK... {episode_artwork}")
+                    os.symlink("/media/posters/" + image, episode_artwork)
 
             elif blur:
                 # File path to episode artwork using the same episode file name
