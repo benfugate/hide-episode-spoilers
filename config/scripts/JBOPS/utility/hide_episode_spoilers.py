@@ -56,6 +56,7 @@ def modify_episode_artwork(plex, rating_key, image=None, blur=None, summary_remo
         return
 
     for episode in episodes:
+        changes = False
         for part in episode.iterParts():
             episode_filepath = "/config" + part.file
             episode_folder = os.path.dirname(episode_filepath)
@@ -70,6 +71,7 @@ def modify_episode_artwork(plex, rating_key, image=None, blur=None, summary_remo
 
                 # Unlock the summary so it will get updated on refresh
                 episode.edit(**{'summary.locked': 0})
+                episode.refresh()
                 continue
 
             if image:
@@ -89,6 +91,7 @@ def modify_episode_artwork(plex, rating_key, image=None, blur=None, summary_remo
                     # Copy the image to the episode artwork
                     print(f"CREATING SYMLINK... {episode_artwork}")
                     os.symlink("/media/posters/" + image, episode_artwork)
+                    changes = True
 
             elif blur:
                 # File path to episode artwork using the same episode file name
@@ -107,6 +110,7 @@ def modify_episode_artwork(plex, rating_key, image=None, blur=None, summary_remo
                     # Copy the image to the episode artwork
                     with open(episode_artwork, 'wb') as f:
                         shutil.copyfileobj(r.raw, f)
+                changes = True
 
             if summary_remove:
                 # Use a zero-width space (\u200b) for blank lines
@@ -116,7 +120,8 @@ def modify_episode_artwork(plex, rating_key, image=None, blur=None, summary_remo
                 })
 
         # Refresh metadata for the episode
-        episode.refresh()
+        if changes:
+            episode.refresh()
 
 
 if __name__ == "__main__":
