@@ -1,21 +1,24 @@
-import sys
+import argparse
 from pyarr import SonarrAPI
 
-sonarr_host_url = sys.argv[1]
-sonarr_api_key = sys.argv[2]
-show_name = sys.argv[3]
+parser = argparse.ArgumentParser()
+parser.add_argument('SonarrHostUrl')
+parser.add_argument('SonarrApiKey')
+parser.add_argument('--show-name')
+args = parser.parse_args()
 
-sonarr = SonarrAPI(sonarr_host_url, sonarr_api_key)
+sonarr = SonarrAPI(args.SonarrHostUrl, args.SonarrApiKey)
 
 show = 0
 request = sonarr.get_series()
 for series in request:
-    if show_name == series["title"]:
+    if args.show_name == series["title"]:
         show = series["id"]
         break
 
 if not show:
-    exit(0)
+    print(f"Show not found... {args.show_name}")
+    exit(2)
 
 request = {"seriesId": show}
 sonarr.post_command("RescanSeries", **request)
