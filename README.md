@@ -11,7 +11,7 @@ Setup:
 ---
 
 Usage:
-- Build the container with `docker build --no-cache -t tautulli .`
+- Build the container with `docker build -t tautulli .`
 - Run with...
 ```
 docker run -d --restart always \
@@ -21,8 +21,6 @@ docker run -d --restart always \
     --network host \
     tautulli
 ```
-
-`update_tautulli.sh` can also be used to build the container for the first time
 
 Your own posters can be added to `posters/`
 
