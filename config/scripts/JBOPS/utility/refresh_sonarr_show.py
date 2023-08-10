@@ -9,6 +9,10 @@ args = parser.parse_args()
 
 sonarr = SonarrAPI(args.SonarrHostUrl, args.SonarrApiKey)
 
+# This show name is super inconsistent and I'm over it
+if args.show_name == "Big Brother":
+    args.show_name = "Big Brother (US)"
+
 show = 0
 request = sonarr.get_series()
 for series in request:
