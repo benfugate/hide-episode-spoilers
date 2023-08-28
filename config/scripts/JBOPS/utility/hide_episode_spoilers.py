@@ -58,7 +58,7 @@ def modify_episode_artwork(plex, rating_key, image=None, blur=None, summary_remo
     for episode in episodes:
         changes = False
         for part in episode.iterParts():
-            episode_filepath = "/config" + part.file
+            episode_filepath = part.file
             episode_folder = os.path.dirname(episode_filepath)
             episode_filename = os.path.splitext(os.path.basename(episode_filepath))[0]
 
