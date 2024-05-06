@@ -15,7 +15,7 @@ Usage:
 - Run with...
 ```
 docker run -d --restart always \
-    -v $PWD/config/:/config/ \
+    -v $PWD/scripts:/scripts \
     -v {media_location}:/media/ \
     --name tautulli \
     --network host \
