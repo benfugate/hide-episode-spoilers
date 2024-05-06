@@ -1,0 +1,25 @@
+name: Update Submodules
+
+on:
+  workflow_dispatch:
+  push:
+  schedule:
+    - cron: '0 1 * * *' # Run daily at 1:00 AM UTC
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git
+        run: |
+          git config --global user.email "actions@example.com"
+          git config --global user.name "GitHub Actions"
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive' # Ensure submodules are fetched
+
+      - name: Update submodule
+        run: |
+          git submodule update --recursive --remote --force
+          git diff --quiet || { echo "Submodule updated, pushing changes..."; git add . && git commit -m "Update submodule" && git push; }
