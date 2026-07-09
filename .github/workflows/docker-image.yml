@@ -9,6 +9,9 @@ jobs:
     steps:
       - name: Check out GitHub repo
         uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          token: ${{ secrets.SUBMODULE_PAT }}
       - name: Extract branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
@@ -22,11 +25,13 @@ jobs:
         if: steps.extract_branch.outputs.branch != 'main'
         uses: docker/build-push-action@v2
         with:
+          context: .
           push: true
           tags: ${{ github.repository }}:${{ steps.extract_branch.outputs.branch }}
       - name: Build image and push to Docker Hub
         if: steps.extract_branch.outputs.branch == 'main'
         uses: docker/build-push-action@v2
         with:
+          context: .
           push: true
           tags: ${{ github.repository }}:latest
