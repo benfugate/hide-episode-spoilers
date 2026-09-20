@@ -1,0 +1,51 @@
+name: CI
+
+# Validation only. Pushes to main are covered by docker-image.yml, which builds
+# before it pushes -- running this on push too would just build everything twice.
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # SUBMODULE_PAT must also exist as a *Dependabot* secret: a run triggered
+      # by Dependabot is given Dependabot secrets, never Actions secrets.
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.SUBMODULE_PAT }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          cache-from: type=gha,scope=latest
+          cache-to: type=gha,mode=max,scope=latest
+
+  automerge:
+    if: github.actor == 'dependabot[bot]'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      # Merged with the PAT rather than GITHUB_TOKEN, so the resulting push
+      # still triggers docker-image.yml. A GITHUB_TOKEN merge would not.
+      - name: Merge the submodule bump
+        if: steps.meta.outputs.package-ecosystem == 'gitsubmodule'
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.SUBMODULE_PAT }}
+        run: gh pr merge --squash --delete-branch "$PR_URL"
