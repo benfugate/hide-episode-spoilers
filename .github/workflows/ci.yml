@@ -43,8 +43,8 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       # Merged with the PAT rather than GITHUB_TOKEN, so the resulting push
       # still triggers docker-image.yml. A GITHUB_TOKEN merge would not.
-      - name: Merge the submodule bump
-        if: steps.meta.outputs.package-ecosystem == 'gitsubmodule'
+      - name: Merge the bump
+        if: contains(fromJSON('["gitsubmodule","docker"]'), steps.meta.outputs.package-ecosystem)
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.SUBMODULE_PAT }}

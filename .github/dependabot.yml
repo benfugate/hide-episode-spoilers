@@ -9,3 +9,17 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+
+  # Replaces the old scheduled base-image check. Actions crons are disabled
+  # after 60 days of repository inactivity; Dependabot schedules are not.
+  # Keeps the :latest tag and updates the pinned digest underneath it.
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 1
+    commit-message:
+      prefix: chore
+      include: scope
+    allow:
+      - dependency-name: "tautulli/tautulli"
